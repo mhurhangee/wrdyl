@@ -1,9 +1,31 @@
 .welcome {
     height: 1fr;
-    border: solid green;
+    content-align: center middle;
+    text-align: center;
 }
+
+
 .column {
     width: 1fr;
-    border: solid red;
     content-align: center middle;
+}
+
+#w {
+    background: green 30%;
+}
+
+#r {
+    background: yellow 30%;
+}
+
+#d {
+    background: red 30%;
+}
+
+#y {
+    background: yellow 30%
+}
+
+#l {
+    background: green 30%;
 }
