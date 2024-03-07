@@ -1,0 +1,9 @@
+.welcome {
+    height: 1fr;
+    border: solid green;
+}
+.column {
+    width: 1fr;
+    border: solid red;
+    content-align: center middle;
+}
