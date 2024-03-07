@@ -22,6 +22,5 @@ class Welcome(Screen):
                 classes='welcome'
             ),
             Static('Welcome to [b]WRDYL[/b]: [i]A python clone of Wordle for your terminal.[/i] \n\n\n Press [b]SPACE[/b] to play the game', classes='welcome'),
-			Static('  ', classes='welcome'),
-            id = 'welcome_page'
+			Static('  ', classes='welcome')
         )
