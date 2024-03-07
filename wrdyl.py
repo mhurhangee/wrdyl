@@ -6,25 +6,7 @@ from textual.screen import Screen
 from components.welcome import Welcome
 from components.help import Help
 from components.closegame import CloseGame
-from components.letters import w, r, d, y, l
-
-class Game(Screen):
-
-    def compose(self) -> ComposeResult:
-        yield Header()
-        yield Footer()
-        yield Vertical(
-            Static('[b](Welcome to)', classes='welcome'),
-            Horizontal(
-                Static(w, classes='column'),
-                Static(r, classes='column'),
-                Static(d, classes='column'),
-                Static(y, classes='column'),
-                Static(l, classes='column'),
-                classes='welcome'
-            ),
-            Static('Enter letters to play', classes='welcome')
-        )
+from components.game import Game
 
 class Wrdyl(App):
 

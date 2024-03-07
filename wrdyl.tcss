@@ -4,10 +4,15 @@
     text-align: center;
 }
 
-
 .column {
     width: 1fr;
     content-align: center middle;
+}
+
+.play_grid {
+    text-align: center;
+    content-align: center middle;
+    offset-y: -2;
 }
 
 #w {
@@ -28,4 +33,19 @@
 
 #l {
     background: green 30%;
+}
+
+.input {
+    width: 15;
+    background: green;
+    text-align: center;
+    text-style: italic bold;
+}
+
+.guesses {
+    width: 15;
+    border: green solid;
+    background: $panel;
+    text-align: center;
+    content-align: center middle;
 }
