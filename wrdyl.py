@@ -3,47 +3,8 @@ from textual.containers import Container, Horizontal, Vertical
 from textual.widgets import Header, Footer, Static
 from textual.screen import Screen
 
-w = """
-██╗    ██╗
-██║    ██║
-██║ █╗ ██║
-██║███╗██║
-╚███╔███╔╝
- ╚══╝╚══╝ 
-"""
-r = """
-██████╗ 
-██╔══██╗
-██████╔╝
-██╔══██╗
-██║  ██║
-╚═╝  ╚═╝
-"""
-d = """
-██████╗ 
-██╔══██╗
-██║  ██║
-██║  ██║
-██████╔╝
-╚═════╝ 
-"""
-y = """
-██╗   ██╗
-╚██╗ ██╔╝
- ╚████╔╝ 
-  ╚██╔╝  
-   ██║   
-   ╚═╝   
-"""
-l = """
-██╗     
-██║     
-██║     
-██║     
-███████╗
-╚══════╝
-"""
-
+from components.welcome import Welcome
+from components.letters import w, r, d, y, l
 
 class Help(Screen):
 
@@ -74,38 +35,19 @@ class CloseGame(Screen):
 		yield Static('To close game press Ctrl + C', id='close_game_message')
 		yield Static('Or press SPACE BAR to go back', id='close_game_message2')
 
-class Welcome(Screen):
-
-    def compose(self) -> ComposeResult:
-        yield Header()
-        yield Footer()
-        yield Vertical(
-            Static('[b](Welcome to)', markup = True, classes='welcome'),
-            Horizontal(
-                Static(w, markup = True, classes='column'),
-                Static(r, markup = True, classes='column'),
-                Static(d, markup = True, classes='column'),
-                Static(y, markup = True, classes='column'),
-                Static(l, markup = True, classes='column'),
-                classes='welcome'
-            ),
-            Static('Press [b][u]((SPACE BAR)) to play the game', classes='welcome'),
-            id = 'welcome_page'
-        )
-
 class Game(Screen):
 
     def compose(self) -> ComposeResult:
         yield Header()
         yield Footer()
         yield Vertical(
-            Static('[b](Welcome to)', markup = True, classes='welcome'),
+            Static('[b](Welcome to)', classes='welcome'),
             Horizontal(
-                Static(w, markup = True, classes='column'),
-                Static(r, markup = True, classes='column'),
-                Static(d, markup = True, classes='column'),
-                Static(y, markup = True, classes='column'),
-                Static(l, markup = True, classes='column'),
+                Static(w, classes='column'),
+                Static(r, classes='column'),
+                Static(d, classes='column'),
+                Static(y, classes='column'),
+                Static(l, classes='column'),
                 classes='welcome'
             ),
             Static('Enter letters to play', classes='welcome'),
