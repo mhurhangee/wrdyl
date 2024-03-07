@@ -4,21 +4,9 @@ from textual.widgets import Header, Footer, Static
 from textual.screen import Screen
 
 from components.welcome import Welcome
+from components.help import Help
 from components.letters import w, r, d, y, l
 
-class Help(Screen):
-
-	BINDINGS = [('ctrl+h', 'pop_screen', 'Close Help')]
-
-	def compose(self) -> ComposeResult:
-		yield Horizontal(
-			Static(w, classes='title_letters'),
-			Static(r, classes='title_letters'),
-			Static(d, classes='title_letters'),
-			Static(y, classes='title_letters'),
-			Static(l, classes='title_letters')
-		)
-		yield Static('Help Message', id='help_message')
 
 class CloseGame(Screen):
 
@@ -67,7 +55,7 @@ class Wrdyl(App):
 
 	BINDINGS = [
 		('ctrl+d', 'toggle_dark', 'Dark/Light Mode'),
-		('ctrl+h', 'help_screen', 'Help Screen'),
+		('question_mark', 'help_screen', 'Help Screen'),
 		('ctrl+x', 'close_game_screen', 'Close Game'),
 		('space', 'game_screen', 'Play game')
 	]
