@@ -5,23 +5,8 @@ from textual.screen import Screen
 
 from components.welcome import Welcome
 from components.help import Help
+from components.closegame import CloseGame
 from components.letters import w, r, d, y, l
-
-
-class CloseGame(Screen):
-
-	BINDINGS = [('ctrl+x', 'pop_screen', 'Close Help')]
-
-	def compose(self) -> ComposeResult:
-		yield Horizontal(
-			Static(w, classes='title_letters'),
-			Static(r, classes='title_letters'),
-			Static(d, classes='title_letters'),
-			Static(y, classes='title_letters'),
-			Static(l, classes='title_letters')
-		)
-		yield Static('To close game press Ctrl + C', id='close_game_message')
-		yield Static('Or press SPACE BAR to go back', id='close_game_message2')
 
 class Game(Screen):
 
@@ -38,8 +23,7 @@ class Game(Screen):
                 Static(l, classes='column'),
                 classes='welcome'
             ),
-            Static('Enter letters to play', classes='welcome'),
-            id = 'welcome_page'
+            Static('Enter letters to play', classes='welcome')
         )
 
 class Wrdyl(App):
@@ -54,10 +38,10 @@ class Wrdyl(App):
 	}
 
 	BINDINGS = [
-		('ctrl+d', 'toggle_dark', 'Dark/Light Mode'),
-		('question_mark', 'help_screen', 'Help Screen'),
+		('space', 'game_screen', 'Play game'),
+		('question_mark', 'help_screen', 'Help'),
 		('ctrl+x', 'close_game_screen', 'Close Game'),
-		('space', 'game_screen', 'Play game')
+		('ctrl+d', 'toggle_dark', 'Dark/Light Mode')
 	]
 
 	TITLE = 'WRDYL: A python clone of Wordle for your terminal'

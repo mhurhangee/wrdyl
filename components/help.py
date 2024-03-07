@@ -25,9 +25,5 @@ class Help(Screen):
                 classes='welcome'
             ),
             Static('[b]How To Play[/b]\n\nGuess the Wordle in 6 tries.\n\nEach guess must be a valid 5-letter word.\n\nThe color of the tiles will change to show how close your guess was to the word.', classes='welcome'),
-			Static('  ', classes='welcome'),
-            id = 'welcome_page'
+			Static('  ', classes='welcome')
         )
-    
-#    def action_help_screen(self) -> None:
-#        self.pop_screen(Help())
