@@ -3,7 +3,9 @@ from textual.app import ComposeResult
 from textual.containers import Horizontal, Vertical, Center, Middle, Grid
 from textual.widgets import Header, Footer, Static, Input, Button
 
+from components.randomword import random_word
 from components.letters import p, l, a, y, exc
+from components.renderstring import RenderString
 
 class Game(Screen):
 
@@ -22,10 +24,17 @@ class Game(Screen):
                 classes='welcome'
             )
         )
+
+        wrdyl_word, wrdyl_definition = random_word()
+
+        r = RenderString()
+        render = r.render(f"{wrdyl_word} and {wrdyl_definition}")
+        
         yield Center(Static(
-            "\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n", classes = 'guesses'
+            f"{render}\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n", classes = 'guesses'
             ), classes = 'play_grid'
         )
         yield Center(
             Input(placeholder="guess", classes='input')
         )
+        
