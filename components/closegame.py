@@ -5,8 +5,6 @@ from textual.widgets import Header, Footer, Static
 
 from components.letters import e, x, i, t, qm
 
-
-
 class CloseGame(Screen):
 
     BINDINGS = [('space', 'pop_screen', 'Return to game')]
@@ -24,6 +22,6 @@ class CloseGame(Screen):
                 Static(qm, classes='column', id='l'),
                 classes='welcome'
             ),
-            Static('Press [b]SPACE[/b] to return to the game \n \n [i]OR[/i] \n \n Press [b]Ctrl+C[/b] to exit the game and return to the terminal.', classes='welcome'),
+            Static('Press [b]SPACE[/b] to return to the game \n \n [i]OR[/i] \n \n Press Ctrl+R for a new game \n \n [i]OR[/i] \n \n Press [b]Ctrl+C[/b] to exit the game and return to the terminal.', classes='welcome'),
 			Static('  ', classes='welcome')
         )
