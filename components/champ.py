@@ -8,16 +8,16 @@ from components.renderstring import RenderString
 
 class Champ(Screen):
 
-    BINDINGS = [
-		('ctrl+w', 'welcome_screen', 'Back to the start'),
-		('ctrl+r', 'game_screen', 'Play game'),
-		('ctrl+d', 'help_screen', 'Help'),
-		('ctrl+y', 'close_game_screen', 'Close Game'),
-		('ctrl+l', 'toggle_dark', 'Dark/Light Mode'),
-		#('ctrl+r', 'pop_screen', 'Pop'),
-		Binding('ctrl+x', 'champ_screen', 'Champ', show=False),
-		Binding('ctrl+z', 'loser_screen', 'Loser', show=False)
-        ]
+    BINDINGS = [('space', 'pop_screen', 'Pop')]
+#		('ctrl+w', 'welcome_screen', 'Back to the start'),
+#		('ctrl+r', 'game_screen', 'Play game'),
+#		('ctrl+d', 'help_screen', 'Help'),
+#		('ctrl+y', 'close_game_screen', 'Close Game'),
+#		('ctrl+l', 'toggle_dark', 'Dark/Light Mode'),
+#		#('ctrl+r', 'pop_screen', 'Pop'),
+#		Binding('ctrl+x', 'champ_screen', 'Champ', show=False),
+#		Binding('ctrl+z', 'loser_screen', 'Loser', show=False)
+ #       ]
 
     def __init__(self, wrdyl_word: str = "Hello", wrdyl_def: str = "World!") -> None:
         super().__init__()

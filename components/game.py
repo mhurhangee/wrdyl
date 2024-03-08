@@ -4,6 +4,8 @@ from textual.containers import Horizontal, Vertical, Center, Middle, Grid, Conta
 from textual.widgets import Header, Footer, Static, Input, Button
 from textual.validation import Length, Validator, Function, ValidationResult
 
+from colorama import Back
+
 import httpx
 
 from components.randomword import random_word
@@ -70,10 +72,7 @@ class Game(Screen):
                 classes='input'
                 )
         )
-    
-
-
-    
+       
 def is_alpha(value: str) -> bool:
     if value.isalpha():
         return True

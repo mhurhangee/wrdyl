@@ -9,6 +9,8 @@ from textual.validation import ValidationResult
 
 import httpx
 
+from colorama import Back
+
 from components.welcome import Welcome
 from components.help import Help
 from components.closegame import CloseGame
@@ -79,6 +81,17 @@ class Wrdyl(App):
 	
 	def action_loser_screen(self) -> None:
 		self.push_screen(f'loser_screen_{self.wrdyl_word}')
+
+	def find_all_indexes(self, string, char):
+		indexes = []
+		try:
+			index = string.index(char)
+			while True:
+				indexes.append(index)
+				index = string.index(char, index + 1)
+		except ValueError:
+			pass
+		return indexes
 	
 	guesses = 0
 	previous_words = []
@@ -88,9 +101,56 @@ class Wrdyl(App):
 			self.guesses += 1
 			self.previous_words.append(event.value)
 
+			player_wrdyl = event.value.upper()
+			random_wrdyl = self.wrdyl_word.upper()
 
-			#display guess
-			self.play_grid[self.guesses-1] = ' '.join(event.value.upper())
+			matching_swapped_player_word =  player_wrdyl
+			matching_swapped_wordle_word = random_wrdyl
+			coloured_output = ''
+
+			correct_letter_index = []
+			for index, char in enumerate(random_wrdyl):
+				if char ==  player_wrdyl[index]:
+					correct_letter_index.append(index)
+					matching_swapped_player_word = matching_swapped_player_word[:index] + '£' + matching_swapped_player_word[index+1:]
+
+			wordle_set = set(matching_swapped_wordle_word)
+			player_set = set(matching_swapped_player_word)
+
+			common_set = wordle_set & player_set
+			common_dictionary_wordle_count = {}
+			common_dictionary_player_count = {}
+
+			if len(common_set) != 0:
+				for letter in common_set:
+					common_dictionary_wordle_count[letter] = matching_swapped_wordle_word.count(letter)
+					common_dictionary_player_count[letter] = matching_swapped_player_word.count(letter)
+
+				commons_letter_index = []
+			
+##			
+				for key in common_dictionary_player_count.keys():
+					if common_dictionary_player_count[key] <= common_dictionary_wordle_count[key]:
+						commons_letter_index = commons_letter_index + self.find_all_indexes(matching_swapped_player_word,key)
+#if count in player word is greater than count in wordle word
+					else:
+						commons_letter_index = commons_letter_index + self.find_all_indexes(matching_swapped_player_word,key)
+						while len(commons_letter_index) > common_dictionary_wordle_count[key]:
+							commons_letter_index.pop()
+            
+				for index in commons_letter_index:
+					matching_swapped_player_word = matching_swapped_player_word[:index] + '@' + matching_swapped_player_word[index+1:]
+                    
+			for i in range(len(random_wrdyl)):
+				if matching_swapped_player_word[i] == '£':
+					coloured_output += '[bold black on green]' +  player_wrdyl[i] + '[/] '
+				elif matching_swapped_player_word[i] == '@':
+					coloured_output += '[bold black on yellow]' +  player_wrdyl[i] + '[/] '
+				else:
+					coloured_output += '[bold black on red]' +  player_wrdyl[i] + '[/] '
+
+
+			self.play_grid[self.guesses-1] = coloured_output
 				
 			game = Game(self.wrdyl_word, self.play_grid)
 			self.install_screen(game, f'game_screen_{self.wrdyl_word}_{self.guesses}')
