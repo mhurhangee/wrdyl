@@ -1,6 +1,6 @@
 from textual.screen import Screen
 from textual.app import ComposeResult, Binding, App
-from textual.containers import Horizontal, Vertical, Center, Middle, Grid
+from textual.containers import Horizontal, Vertical, Center, Middle, Grid, Container
 from textual.widgets import Header, Footer, Static, Input, Button
 from textual.validation import Length, Validator, Function, ValidationResult
 
@@ -16,9 +16,19 @@ class Game(Screen):
     #BINDINGS = [
     #    Binding('ctrl+x', 'champ_screen', 'Champ', show=False)
     #    ]
-    def __init__(self, wrdyl_word: str = "Hello", wrdyl_def: str = "World!") -> None:
+    def __init__(
+            self, 
+            wrdyl_word: str = "Hello", 
+            #wrdyl_def: str = "World!",
+            play_grid: str = '\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n'
+            ) -> None:
         super().__init__()
         self.wrdyl_word = wrdyl_word
+        self.play_grid = play_grid
+    
+    def on_input_submitted(self, event: Input.Submitted) -> None:
+        #if event.value == self.wrdyl_word:
+        self.play_grid = 'Hello'
     
 
 
@@ -40,7 +50,7 @@ class Game(Screen):
         #render = r.render(f"{wrdyl_word} and {wrdyl_definition}")
         
         yield Center(Static(
-            "\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n", classes = 'guesses'
+            f"{self.play_grid}", classes = 'guesses'
             ), classes = 'play_grid'
         )
         yield Center(
@@ -54,6 +64,8 @@ class Game(Screen):
                 classes='input'
                 )
         )
+    
+
 
     
 def is_alpha(value: str) -> bool:

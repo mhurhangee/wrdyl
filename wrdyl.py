@@ -2,7 +2,7 @@ from typing import Coroutine
 from textual.app import App, ComposeResult, RenderResult, Binding
 from textual.containers import Container, Horizontal, Vertical
 from textual.events import Key
-from textual.widgets import Header, Footer, Static
+from textual.widgets import Header, Footer, Static, Input
 from textual.screen import Screen
 from textual.widget import Widget
 
@@ -57,10 +57,11 @@ class Wrdyl(App):
 	
 	def action_game_screen(self) -> None:
 		self.wrdyl_word, self.wrdyl_def = random_word()
+		play_grid = '123\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n'
 
-		
 		if not self.is_screen_installed(f'game_screen_{self.wrdyl_word}_0'):
-			self.install_screen(Game(), f'game_screen_{self.wrdyl_word}_0')
+			game = Game(self.wrdyl_word, play_grid)
+			self.install_screen(game, f'game_screen_{self.wrdyl_word}_0')
 			self.install_screen(Champ(self.wrdyl_word, self.wrdyl_def), f'champ_screen_{self.wrdyl_word}')
 			self.install_screen(Loser(self.wrdyl_word, self.wrdyl_def), f'loser_screen_{self.wrdyl_word}')
 			self.push_screen(f'game_screen_{self.wrdyl_word}_0')
@@ -71,6 +72,14 @@ class Wrdyl(App):
 	
 	def action_loser_screen(self) -> None:
 		self.push_screen(f'loser_screen_{self.wrdyl_word}')
+
+	def on_input_submitted(self, event: Input.Submitted) -> None:
+        #if event.value == self.wrdyl_word:
+		play_grid = event.value
+		game = Game(self.wrdyl_word, play_grid)
+		self.install_screen(game, f'game_screen_{self.wrdyl_word}_1')
+		self.push_screen(f'game_screen_{self.wrdyl_word}_1')
+
 
 if __name__ == '__main__':
 	app = Wrdyl()
