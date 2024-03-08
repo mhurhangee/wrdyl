@@ -2,6 +2,7 @@ from textual.screen import Screen
 from textual.app import ComposeResult, Binding, App
 from textual.containers import Horizontal, Vertical, Center, Middle, Grid
 from textual.widgets import Header, Footer, Static, Input, Button
+from textual.validation import Length, Validator, Function, ValidationResult
 
 from components.randomword import random_word
 from components.letters import p, l, a, y, exc
@@ -13,6 +14,11 @@ class Game(Screen):
     #BINDINGS = [
     #    Binding('ctrl+x', 'champ_screen', 'Champ', show=False)
     #    ]
+    def __init__(self, wrdyl_word: str = "Hello", wrdyl_def: str = "World!") -> None:
+        super().__init__()
+        self.wrdyl_word = wrdyl_word
+    
+
 
     def compose(self) -> ComposeResult:
         yield Header()
@@ -36,5 +42,19 @@ class Game(Screen):
             ), classes = 'play_grid'
         )
         yield Center(
-            Input(placeholder="guess", classes='input')
+            Input(
+                placeholder="guess",
+                validators=[
+                    Length(5,5),
+                    Function(is_alpha, False)
+                            ], 
+                classes='input'
+                )
         )
+
+    
+def is_alpha(value: str) -> bool:
+    if value.isalpha():
+        return True
+    else:
+        return False
