@@ -50,4 +50,4 @@ def random_word():
         long_def = "\n".join(lines)
         break
      
-    return results[0], long_def 
+    return results[0].upper(), long_def 

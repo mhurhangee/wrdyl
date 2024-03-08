@@ -5,6 +5,7 @@ from textual.events import Key
 from textual.widgets import Header, Footer, Static, Input
 from textual.screen import Screen
 from textual.widget import Widget
+from textual.validation import ValidationResult
 
 import httpx
 
@@ -28,11 +29,11 @@ class Wrdyl(App):
 	}
 
 	BINDINGS = [
-		('ctrl+w', 'welcome_screen', 'Back to the start'),
-		('ctrl+r', 'game_screen', 'Play game'),
-		('ctrl+d', 'help_screen', 'Help'),
-		('ctrl+y', 'close_game_screen', 'Close Game'),
-		('ctrl+l', 'toggle_dark', 'Dark/Light Mode'),
+		Binding('ctrl+w', 'welcome_screen', 'Back to the start', show=True, priority=True),
+		Binding('ctrl+r', 'game_screen', 'Play game', show=True, priority=True),
+		Binding('ctrl+d', 'help_screen', 'Help', show=True, priority=True),
+		Binding('ctrl+y', 'close_game_screen', 'Close Game', show=True, priority=True),
+		Binding('ctrl+l', 'toggle_dark', 'Dark/Light Mode', show=True, priority=True),
 		#('ctrl+r', 'pop_screen', 'Pop'),
 		Binding('ctrl+x', 'champ_screen', 'Champ', show=False),
 		Binding('ctrl+z', 'loser_screen', 'Loser', show=False)
@@ -55,17 +56,22 @@ class Wrdyl(App):
 	def action_welcome_screen(self) -> None:
 		self.push_screen(Welcome())
 
-	play_grid = '1\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n'
+	play_grid = ['█ █ █ █ █' for i in range(6)]
+	#'\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n'
 	
 	def action_game_screen(self) -> None:
 		self.wrdyl_word, self.wrdyl_def = random_word()
 
 		if not self.is_screen_installed(f'game_screen_{self.wrdyl_word}_0'):
+			self.guesses = 0
+			self.previous_words = []
+			self.play_grid = ['█ █ █ █ █' for i in range(6)]
 			game = Game(self.wrdyl_word, self.play_grid)
 			self.install_screen(game, f'game_screen_{self.wrdyl_word}_0')
 			self.install_screen(Champ(self.wrdyl_word, self.wrdyl_def), f'champ_screen_{self.wrdyl_word}')
 			self.install_screen(Loser(self.wrdyl_word, self.wrdyl_def), f'loser_screen_{self.wrdyl_word}')
 			self.push_screen(f'game_screen_{self.wrdyl_word}_0')
+
 	
 	def action_champ_screen(self) -> None:
 		self.pop_screen()
@@ -75,14 +81,21 @@ class Wrdyl(App):
 		self.push_screen(f'loser_screen_{self.wrdyl_word}')
 	
 	guesses = 0
+	previous_words = []
 
 	def on_input_submitted(self, event: Input.Submitted) -> None:
-		self.guesses += 1
-        #if event.value == self.wrdyl_word:
-		self.play_grid += event.value
-		game = Game(self.wrdyl_word, self.play_grid)
-		self.install_screen(game, f'game_screen_{self.wrdyl_word}_{self.guesses}')
-		self.push_screen(f'game_screen_{self.wrdyl_word}_{self.guesses}')
+		if event.validation_result.is_valid and event.value not in self.previous_words: 
+			self.guesses += 1
+			self.previous_words.append(event.value)
+
+
+			#display guess
+			self.play_grid[self.guesses-1] = ' '.join(event.value.upper())
+				
+			game = Game(self.wrdyl_word, self.play_grid)
+			self.install_screen(game, f'game_screen_{self.wrdyl_word}_{self.guesses}')
+			self.push_screen(f'game_screen_{self.wrdyl_word}_{self.guesses}')
+
 
 
 if __name__ == '__main__':

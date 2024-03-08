@@ -13,24 +13,30 @@ from components.champ import Champ
 
 class Game(Screen):
 
-    #BINDINGS = [
-    #    Binding('ctrl+x', 'champ_screen', 'Champ', show=False)
-    #    ]
+    BINDINGS = [
+        Binding('ctrl+w', 'welcome_screen', 'Back to the start', show=True, priority=True),
+        Binding('ctrl+r', 'game_screen', 'Play game', show=True, priority=True),
+        Binding('ctrl+d', 'help_screen', 'Help', show=True, priority=True),
+        Binding('ctrl+y', 'close_game_screen', 'Close Game', show=True, priority=True),
+        Binding('ctrl+l', 'toggle_dark', 'Dark/Light Mode', show=True, priority=True),
+		#('ctrl+r', 'pop_screen', 'Pop'),
+        Binding('ctrl+x', 'champ_screen', 'Champ', show=False),
+        Binding('ctrl+z', 'loser_screen', 'Loser', show=False)
+    ]
+ 
     def __init__(
             self, 
             wrdyl_word: str = "Hello", 
             #wrdyl_def: str = "World!",
-            play_grid: str = '\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n'
+            play_grid: list = ['fail']
             ) -> None:
         super().__init__()
         self.wrdyl_word = wrdyl_word
-        self.play_grid = play_grid
-    
-    def on_input_submitted(self, event: Input.Submitted) -> None:
-        #if event.value == self.wrdyl_word:
-        self.play_grid = 'Hello'
-    
+        self.game_display = ''
+        for i in range(len(play_grid)):
+            self.game_display += '\n' + str(play_grid[i]) + '\n'
 
+    
 
     def compose(self) -> ComposeResult:
         yield Header()
@@ -50,7 +56,7 @@ class Game(Screen):
         #render = r.render(f"{wrdyl_word} and {wrdyl_definition}")
         
         yield Center(Static(
-            f"{self.play_grid}", classes = 'guesses'
+            f"{self.game_display}", classes = 'guesses'
             ), classes = 'play_grid'
         )
         yield Center(
@@ -72,7 +78,7 @@ def is_alpha(value: str) -> bool:
     if value.isalpha():
         return True
     else:
-        return False
+        return None
 
 def is_in_dictionary(value: str) -> bool:
         if len(value) == 5:

@@ -22,6 +22,6 @@ class CloseGame(Screen):
                 Static(qm, classes='column', id='l'),
                 classes='welcome'
             ),
-            Static('Press [b]SPACE[/b] to return to the game \n \n [i]OR[/i] \n \n Press Ctrl+R for a new game \n \n [i]OR[/i] \n \n Press [b]Ctrl+C[/b] to exit the game and return to the terminal.', classes='welcome'),
+            Static('Press [b]SPACE[/b] to return. \n [i]OR[/i] \n Press [b]Ctrl+R[/b] for a new game \n [i]OR[/i] \n Press [b]Ctrl+C[/b] to exit the game and return to the terminal.', classes='welcome'),
 			Static('  ', classes='welcome')
         )
