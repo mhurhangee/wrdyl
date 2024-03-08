@@ -54,13 +54,14 @@ class Wrdyl(App):
 	
 	def action_welcome_screen(self) -> None:
 		self.push_screen(Welcome())
+
+	play_grid = '1\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n'
 	
 	def action_game_screen(self) -> None:
 		self.wrdyl_word, self.wrdyl_def = random_word()
-		play_grid = '123\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n'
 
 		if not self.is_screen_installed(f'game_screen_{self.wrdyl_word}_0'):
-			game = Game(self.wrdyl_word, play_grid)
+			game = Game(self.wrdyl_word, self.play_grid)
 			self.install_screen(game, f'game_screen_{self.wrdyl_word}_0')
 			self.install_screen(Champ(self.wrdyl_word, self.wrdyl_def), f'champ_screen_{self.wrdyl_word}')
 			self.install_screen(Loser(self.wrdyl_word, self.wrdyl_def), f'loser_screen_{self.wrdyl_word}')
@@ -72,13 +73,16 @@ class Wrdyl(App):
 	
 	def action_loser_screen(self) -> None:
 		self.push_screen(f'loser_screen_{self.wrdyl_word}')
+	
+	guesses = 0
 
 	def on_input_submitted(self, event: Input.Submitted) -> None:
+		self.guesses += 1
         #if event.value == self.wrdyl_word:
-		play_grid = event.value
-		game = Game(self.wrdyl_word, play_grid)
-		self.install_screen(game, f'game_screen_{self.wrdyl_word}_1')
-		self.push_screen(f'game_screen_{self.wrdyl_word}_1')
+		self.play_grid += event.value
+		game = Game(self.wrdyl_word, self.play_grid)
+		self.install_screen(game, f'game_screen_{self.wrdyl_word}_{self.guesses}')
+		self.push_screen(f'game_screen_{self.wrdyl_word}_{self.guesses}')
 
 
 if __name__ == '__main__':
