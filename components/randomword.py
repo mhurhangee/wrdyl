@@ -36,14 +36,15 @@ def random_word():
             continue
         elif isinstance(word_def, list):
             for result in word_def:
-                    lines.append(f"{result['word']}")
-                    lines.append("")
+                    lines.append("-----------------------------------------------------------")
+                    lines.append(f"[b]{result['word']}[/b]")
+                    lines.append("-----------------------------------------------------------")
                     for meaning in result.get("meanings", []):
-                        lines.append(f"_{meaning['partOfSpeech']}_")
+                        lines.append(f"[i]{meaning['partOfSpeech']}[/i]")
                         lines.append("")
                         for definition in meaning.get("definitions", []):
-                            lines.append(f" - {definition['definition']}")
-                        lines.append("---")
+                            lines.append(f" ~ {definition['definition']}")
+                        lines.append("-----------------------------------------------------------")
         
 
         long_def = "\n".join(lines)
