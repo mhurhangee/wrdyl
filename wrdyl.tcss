@@ -39,7 +39,7 @@
     width: 15;
     background: green;
     text-align: center;
-    text-style: italic bold;
+    text-style: bold;
 }
 
 .guesses {
