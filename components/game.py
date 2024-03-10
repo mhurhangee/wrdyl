@@ -63,7 +63,7 @@ class Game(Screen):
         )
         yield Center(
             Input(
-                placeholder="guess",
+                placeholder="WRDYL",
                 validators=[
                     Length(5,5),
                     Function(is_alpha, False),

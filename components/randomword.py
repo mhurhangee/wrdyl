@@ -48,6 +48,7 @@ def random_word():
         
 
         long_def = "\n".join(lines)
+        long_def += '\n\n Press [b]Ctrl+R[/b] to play again.'
         break
      
     return results[0].upper(), long_def 
