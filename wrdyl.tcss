@@ -43,9 +43,9 @@
 }
 
 .guesses {
-    width: 15;
+    width: 55;
     border: green solid;
-    background: $panel;
+
     text-align: center;
     content-align: center middle;
 }

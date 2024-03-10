@@ -30,7 +30,7 @@ class Loser(Screen):
         render_def = r.render(f"{self.wrdyl_def}")
         yield Header()
         yield Footer()
-        yield Vertical(
+        yield Vertical (
             Horizontal(
                 Static(l, classes='column', id='w'),
                 Static(o, classes='column', id='r'),
@@ -39,5 +39,5 @@ class Loser(Screen):
                 Static(r1, classes='column', id='l'),
                 classes='welcome'
             ),
-            Static(f"Unlucky [b]LOSER[/b]. You failed to guess [b]{render_word}[/b]. \n \n {render_def}", classes='welcome')
+            Static(f"Unlucky [i]LOSER[/i]. You failed to guess [b][white on bright_red]{render_word}[/b][/]. \n \n {render_def}", classes='welcome')
         )

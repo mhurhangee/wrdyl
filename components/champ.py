@@ -39,5 +39,5 @@ class Champ(Screen):
                 Static(p, classes='column', id='l'),
                 classes='welcome'
             ),
-            Static(f"Well done [b]CHAMP[/b]. You guessed [b]{render_word}[/b]. \n \n {render_def}", classes='welcome')
+            Static(f"Well done [i]CHAMP[/i]! You guessed [b][white on bright_green]{render_word}[/][/b]. \n \n {render_def}", classes='welcome')
         )
