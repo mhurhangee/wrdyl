@@ -21,6 +21,6 @@ class Welcome(Screen):
                 Static(l, classes='column', id='l'),
                 classes='welcome'
             ),
-            Static('Welcome to [b]WRDYL[/b]: [i]A python clone of Wordle for your terminal.[/i] \n\n\n Press [b]Ctrl+R[/b] to play the game', classes='welcome'),
+            Static('Welcome to [b]WRDYL[/b]: [i]A python clone of Wordle for your terminal.[/i] \n\n\n Press [b]Ctrl+R[/b] to play [b]Wrdyl![/]', classes='welcome'),
 			Static('  ', classes='welcome')
         )

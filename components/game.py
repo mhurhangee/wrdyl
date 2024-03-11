@@ -72,6 +72,7 @@ class Game(Screen):
                 classes='input'
                 )
         )
+        yield Static('  ', classes='welcome')
        
 def is_alpha(value: str) -> bool:
     if value.isalpha():

@@ -1,30 +1,26 @@
-from typing import Coroutine
-from textual.app import App, ComposeResult, RenderResult, Binding
-from textual.containers import Container, Horizontal, Vertical
-from textual.events import Key
-from textual.widgets import Header, Footer, Static, Input
-from textual.screen import Screen
-from textual.widget import Widget
-from textual.validation import ValidationResult
+#Imports from textual for the app
+from textual.app import App, Binding
+from textual.widgets import  Input
 
-import httpx
-
-from colorama import Back
-
-import time
-
+#Local imports of classes used to generate different screens of the game.
+#I.e. the welcome splash screen, help screen, confirming closing the game screen, winning and losing screens.
 from components.welcome import Welcome
 from components.help import Help
 from components.closegame import CloseGame
 from components.game import Game
 from components.champ import Champ
 from components.loser import Loser
+
+#Function to retrieve a random word from an API and it's definition from a dictionary API
 from components.randomword import random_word
 
+#Main and parent App class for the textual application. All other classes and functions are called from the Wrdyl app.
 class Wrdyl(App):
 
+	#CSS style sheet in textual format
 	CSS_PATH = 'wrdyl.tcss'
 
+	#Pre-installing the main screens of the app.
 	SCREENS = {
 		'help_screen': Help(),
 		'welcome_screen': Welcome(),
@@ -32,59 +28,72 @@ class Wrdyl(App):
 		'game_screen': Game()
 	}
 
+	#Defining the key bindings used to play and navigate the app.
 	BINDINGS = [
 		Binding('ctrl+w', 'welcome_screen', 'Back to the start', show=True, priority=True),
 		Binding('ctrl+r', 'game_screen', 'Play game', show=True, priority=True),
 		Binding('ctrl+d', 'help_screen', 'Help', show=True, priority=True),
-		Binding('ctrl+y', 'close_game_screen', 'Close Game', show=True, priority=True),
-		Binding('ctrl+l', 'toggle_dark', 'Dark/Light Mode', show=True, priority=True),
-		#('ctrl+r', 'pop_screen', 'Pop'),
-		Binding('ctrl+x', 'champ_screen', 'Champ', show=False),
-		Binding('ctrl+z', 'loser_screen', 'Loser', show=False)
+		Binding('ctrl+y', 'close_game_screen', 'Close Game', show=True, priority=True)#,
+		#Binding('ctrl+l', 'toggle_dark', 'Dark/Light Mode', show=True, priority=True),
 	]
 
+	#Title of the app displayed in the header.
 	TITLE = 'WRDYL: A python clone of Wordle for your terminal'
 
+	#Shows the Welcome screen on the App being loaded.
 	def on_mount(self) -> None:
 		self.push_screen(Welcome())
 
-	def action_toggle_dark(self) -> None:
-		self.dark = not self.dark
-
+	#Show the help screen when the key binding to help_screen is pressed (ctrl+d)
 	def action_help_screen(self) -> None:
 		self.push_screen(Help())
 
+	#Show the close game? screen when the key binding to close_game_screen is pressed (ctrl+y)
 	def action_close_game_screen(self) -> None:
 		self.push_screen(CloseGame())
 	
+	#Show the welcome screen when the key binding to welcome_screen is pressed (ctrl+w)
 	def action_welcome_screen(self) -> None:
 		self.push_screen(Welcome())
 
-	play_grid = ['███ ███ ███ ███ ███' for i in range(6)]
-	#'\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n█ █ █ █ █\n\n'
+	#Initialise play grid variable that is used to display the blocks and letters for the game,
+		#guesses which is used to track which turn the player is on (and which row on the play grid to edit) and
+		# list of previous guesses
+	play_grid = ''
+	guesses = 0
+	previous_words = []
 	
+	#Show a new game screen when the key binding to game_screen is pressed (ctrl+r). Is used to start
+		#a new game, generate a new random word and fresh interface.
 	def action_game_screen(self) -> None:
+		
+		#Get a random word and its definition from the APIs
 		self.wrdyl_word, self.wrdyl_def = random_word()
 
+		#check if a game screen for the random word exists. The game_screens are called game_screen_<random_word>_<no. of guess>.
+			#Thereby each screen is unique and avoids their names clashing.  Popping and uninstalling the screen would be preferable 
+			#to avoid making more and more screens. However, uninstall feature of textual appears to be bugged/not working as intended. 
 		if not self.is_screen_installed(f'game_screen_{self.wrdyl_word}_0'):
+
+			#Reset the variables for the new game.
 			self.guesses = 0
 			self.previous_words = []
 			self.play_grid = ['███ ███ ███ ███ ███' for i in range(6)]
+
+			#Initialise and install game screen for this games random word
 			game = Game(self.wrdyl_word, self.play_grid)
 			self.install_screen(game, f'game_screen_{self.wrdyl_word}_0')
+
+			#Install winning and losing screens to be called later if need.
 			self.install_screen(Champ(self.wrdyl_word, self.wrdyl_def), f'champ_screen_{self.wrdyl_word}')
 			self.install_screen(Loser(self.wrdyl_word, self.wrdyl_def), f'loser_screen_{self.wrdyl_word}')
+
+			#Display game screen
 			self.push_screen(f'game_screen_{self.wrdyl_word}_0')
 
-	
-	def action_champ_screen(self) -> None:
-		self.pop_screen()
-		self.push_screen(f'champ_screen_{self.wrdyl_word}')
-	
-	def action_loser_screen(self) -> None:
-		self.push_screen(f'loser_screen_{self.wrdyl_word}')
-
-	def find_all_indexes(self, string, char):
+	#Function used in logic of colouring the letters. It finds all the instances of the a character in a string
+			#and reutns as a list of indexes
+	def find_all_indexes(self, string, char) -> list:
 		indexes = []
 		try:
 			index = string.index(char)
@@ -95,46 +104,67 @@ class Wrdyl(App):
 			pass
 		return indexes
 	
-	guesses = 0
-	previous_words = []
-
+	#Called whenever a user submits a guess by hitting enter. Logic used to assess guesses and update play grid.
 	def on_input_submitted(self, event: Input.Submitted) -> None:
-		if event.validation_result.is_valid and event.value not in self.previous_words: 
+
+		#Assess if input is valid (length==5, in dictionary API, only A to Z and not already guessed)
+			#If valid continue, otherwise display notification saying it is not valid.
+		if event.validation_result.is_valid and event.value not in self.previous_words:
+			#track number of guesses and previous guesses  
 			self.guesses += 1
 			self.previous_words.append(event.value)
 
+			#for readbility set the player guess and random word to new variables and as UPPERCASE
 			player_wrdyl = event.value.upper()
 			random_wrdyl = self.wrdyl_word.upper()
 
+			#Matching swapped variables are used in the logic to determine matches betweem the player's word and the random word.
+				#The matching_swapped variables are editted as matches are found to prevent a two letters of the player's word matching
+				#against a single letter in random word. Thus, providing a more accurate not misleading coloured output.
 			matching_swapped_player_word =  player_wrdyl
 			matching_swapped_wordle_word = random_wrdyl
+			
+			#Initialise coloured output to replace the row in the play grid
 			coloured_output = ''
 
-			correct_letter_index = []
+			#Find the direct matches i.e. the H in HELLO and HATCH. but not the H, L and O in HELLO and LOATH. Marked as green in game.	
+				#For each character in the random word, check if the character matches the corresponding character in the player guess.
+				#If so, swap the letter out for $ or £, respectively to prevent additional matches later and to provide coloured output.
+				#Also, add to correct letter index
 			for index, char in enumerate(random_wrdyl):
 				if char ==  player_wrdyl[index]:
-					correct_letter_index.append(index)
-					matching_swapped_player_word = matching_swapped_player_word[:index] + '£' + matching_swapped_player_word[index+1:] #(SKIN£) or K££££
+					matching_swapped_player_word = matching_swapped_player_word[:index] + '£' + matching_swapped_player_word[index+1:]
 					matching_swapped_wordle_word = matching_swapped_wordle_word[:index] + '$' + matching_swapped_wordle_word[index+1:]
 
+			#Form sets of unique characters for each word (not including the direct matches) and find their intersection
+				#That way, we know if there are any common letters to mark as yellow. I.e. the H, L and O in HELLO AND SLOTH.
+				#The H in HELLO and HATCH would not appear as swapped for £ and $ respectively.
 			wordle_set = set(matching_swapped_wordle_word)
 			player_set = set(matching_swapped_player_word)
-
 			common_set = wordle_set & player_set
+
+			#Initialise dictionaries to store common letters from both words as the key and their frequency as the value
 			common_dictionary_wordle_count = {}
 			common_dictionary_player_count = {}
 
+			#Check if common set has any members, i.e. check there are common letters.
+				#For example, none in HELLO and HATCH and three in HELLO AND SLOTH
 			if len(common_set) != 0:
+				#store common letters for random and player words as the key and their frequency as the value
 				for letter in common_set:
 					common_dictionary_wordle_count[letter] = matching_swapped_wordle_word.count(letter)
 					common_dictionary_player_count[letter] = matching_swapped_player_word.count(letter)
 
+				#Used to store which common letters to swap out. In case of the L in HELLO and SLOTH,
+					#we only want to swap (i.e. colour yellow) the first L in HELLO as only one L in SLOTH. 
 				commons_letter_index = []
-				
+
+				#For each common letter, if the frequency of the letter is less or equal in the player word, find all the indexes in 
+				 #the random word. For example, if player word SLOTH and random word HELLO, for L we find all the indexes of L in SLOTH 
 				for key in common_dictionary_player_count.keys():
 					if common_dictionary_player_count[key] <= common_dictionary_wordle_count[key]:
 						commons_letter_index = commons_letter_index + self.find_all_indexes(matching_swapped_player_word,key)
-#if count in player word is greater than count in wordle word
+						#IF the frequency of letter is greater in player word, we f
 					else:
 						commons_letter_index = commons_letter_index + self.find_all_indexes(matching_swapped_player_word,key)
 						while len(commons_letter_index) > common_dictionary_wordle_count[key]:
@@ -167,10 +197,11 @@ class Wrdyl(App):
 				self.push_screen(f'loser_screen_{self.wrdyl_word}')
 				self.notify(f" Read a book.", title="Pathetic", severity="information", timeout=5)
 
+		#If the input submitted by the user isn't valid display a notification informing the user of why.
 		elif event.value.upper() == "WRDYL" :
 			self.notify(f"It's the name of the game.", title="WRDYL!", severity="information", timeout=5)
 		elif event.value in self.previous_words:
-			self.notify(f"Already guessed {event.value} before. Please enter a unique word", title="Already guessed!", severity="warning", timeout=5)
+			self.notify(f"Already guessed [i]{event.value.upper()}[/] before. Please enter a unique word", title="Already guessed!", severity="warning", timeout=5)
 		elif not event.value.isalpha():
 			self.notify(f"Your guess can only contain the letters A to Z.", title="Weird characters!", severity="error", timeout=5)
 		elif not event.validation_result.is_valid and len(event.value) < 5:
@@ -182,9 +213,7 @@ class Wrdyl(App):
 		else:
 			pass
 
-		
-
-
+#Run the app
 if __name__ == '__main__':
 	app = Wrdyl()
 	app.run()

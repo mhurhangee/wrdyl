@@ -39,5 +39,6 @@ class Loser(Screen):
                 Static(r1, classes='column', id='l'),
                 classes='welcome'
             ),
-            Static(f"Unlucky [i]LOSER[/i]. You failed to guess [b][white on bright_red]{render_word}[/b][/]. \n \n {render_def}", classes='welcome')
+            Static(f"Unlucky [i]LOSER[/i]! You failed to guess [b][white on bright_red]{render_word}[/b][/]. \n \n Press [b]Ctrl+R[/b] to play again. \n \n{render_def}", classes='welcome'),
+            Static('  ', classes='welcome')
         )
