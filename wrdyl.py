@@ -157,20 +157,21 @@ class Wrdyl(App):
 
 				#Used to store which common letters to swap out. In case of the L in HELLO and SLOTH,
 					#we only want to swap (i.e. colour yellow) the first L in HELLO as only one L in SLOTH. 
-				commons_letter_index = []
+				commons_letter_index = [[] for i in range(len(common_dictionary_player_count))]
 
 				#For each common letter, if the frequency of the letter is less or equal in the player word, find all the indexes in 
-				 #the random word. For example, if player word SLOTH and random word HELLO, for L we find all the indexes of L in SLOTH 
+				 #the random word. For example, if player word SLOTH and random word HELLO, for L we find all the indexes of L in SLOTH
+				i = 0 
 				for key in common_dictionary_player_count.keys():
-					if common_dictionary_player_count[key] <= common_dictionary_wordle_count[key]:
-						commons_letter_index = commons_letter_index + self.find_all_indexes(matching_swapped_player_word,key)
-						#IF the frequency of letter is greater in player word, we f
-					else:
-						commons_letter_index = commons_letter_index + self.find_all_indexes(matching_swapped_player_word,key)
-						while len(commons_letter_index) > common_dictionary_wordle_count[key]:
-							commons_letter_index.pop()
-            
-				for index in commons_letter_index:
+					commons_letter_index[i] = commons_letter_index[i] + self.find_all_indexes(matching_swapped_player_word,key)
+					while len(commons_letter_index[i]) > common_dictionary_wordle_count[key]:
+						commons_letter_index[i].pop()
+					i += 1
+				
+				common_letters_list = []
+				[common_letters_list.extend(row) for row in commons_letter_index]
+
+				for index in common_letters_list:
 					matching_swapped_player_word = matching_swapped_player_word[:index] + '@' + matching_swapped_player_word[index+1:]
                     
 			for i in range(len(random_wrdyl)):
