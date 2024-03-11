@@ -1,5 +1,5 @@
+#Render String using textual's inbuilt functions
 from textual.app import RenderResult
-
 from textual.widget import Widget
 
 class RenderString(Widget):

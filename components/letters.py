@@ -1,3 +1,8 @@
+#ASCII art of the title letters.
+#https://www.patorjk.com/software/taag/#p=display&f=ANSI%20Shadow&t=GENERATE%20LETTERS%20HERE
+#Letters were generated on the above link using the ANSI Shadow font
+#Only the letters needed are included
+
 w = """
 ██╗    ██╗
 ██║    ██║

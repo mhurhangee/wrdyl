@@ -31,7 +31,7 @@ class Wrdyl(App):
 	#Defining the key bindings used to play and navigate the app.
 	BINDINGS = [
 		Binding('ctrl+w', 'welcome_screen', 'Back to the start', show=True, priority=True),
-		Binding('ctrl+r', 'game_screen', 'Play game', show=True, priority=True),
+		Binding('ctrl+r', 'game_screen', 'Start a new game', show=True, priority=True),
 		Binding('ctrl+d', 'help_screen', 'Help', show=True, priority=True),
 		Binding('ctrl+y', 'close_game_screen', 'Close Game', show=True, priority=True)#,
 		#Binding('ctrl+l', 'toggle_dark', 'Dark/Light Mode', show=True, priority=True),
@@ -80,15 +80,9 @@ class Wrdyl(App):
 			self.previous_words = []
 			self.play_grid = ['███ ███ ███ ███ ███' for i in range(6)]
 
-			#Initialise and install game screen for this games random word
+			#Initialise, install and display game screen for this games random word
 			game = Game(self.wrdyl_word, self.play_grid)
 			self.install_screen(game, f'game_screen_{self.wrdyl_word}_0')
-
-			#Install winning and losing screens to be called later if need.
-			self.install_screen(Champ(self.wrdyl_word, self.wrdyl_def), f'champ_screen_{self.wrdyl_word}')
-			self.install_screen(Loser(self.wrdyl_word, self.wrdyl_def), f'loser_screen_{self.wrdyl_word}')
-
-			#Display game screen
 			self.push_screen(f'game_screen_{self.wrdyl_word}_0')
 
 	#Function used in logic of colouring the letters. It finds all the instances of the a character in a string
@@ -156,11 +150,14 @@ class Wrdyl(App):
 					common_dictionary_player_count[letter] = matching_swapped_player_word.count(letter)
 
 				#Used to store which common letters to swap out. In case of the L in HELLO and SLOTH,
-					#we only want to swap (i.e. colour yellow) the first L in HELLO as only one L in SLOTH. 
+					#we only want to swap (i.e. colour yellow) the first L in HELLO as only one L in SLOTH.
+					#Create a 2D list to store indexs for each letter as a sublist
 				commons_letter_index = [[] for i in range(len(common_dictionary_player_count))]
 
 				#For each common letter, if the frequency of the letter is less or equal in the player word, find all the indexes in 
-				 #the random word. For example, if player word SLOTH and random word HELLO, for L we find all the indexes of L in SLOTH
+				 #the random word. For example, if player word SLOTH and random word HELLO, for L we find all the indexes of L in SLOTH (1)
+				 #if player word HELLO and random SLOTH we find all indexes for L annd store as sublist [2,3] and trim to a sub list of [2],
+				 #as only want to show one L as yellow as only one L in SLOTH.
 				i = 0 
 				for key in common_dictionary_player_count.keys():
 					commons_letter_index[i] = commons_letter_index[i] + self.find_all_indexes(matching_swapped_player_word,key)
@@ -168,13 +165,19 @@ class Wrdyl(App):
 						commons_letter_index[i].pop()
 					i += 1
 				
+				#Convert 2D list to 1D
 				common_letters_list = []
 				[common_letters_list.extend(row) for row in commons_letter_index]
 
+				#For all Common letters swap them with @ in the matching word
 				for index in common_letters_list:
 					matching_swapped_player_word = matching_swapped_player_word[:index] + '@' + matching_swapped_player_word[index+1:]
-                    
-			for i in range(len(random_wrdyl)):
+            
+			#Produce the coloured output using the matching_swapp word.
+				# £ are swapped for green indicating a direct match
+				# @ are swapped for yellow indicating a common letter
+				# everything else (normal characters) are displayed as white	
+			for i in range(len(matching_swapped_player_word)):
 				if matching_swapped_player_word[i] == '£':
 					coloured_output += '[b][white on bright_green]' +  ' ' + player_wrdyl[i]+ ' ' + '[/][/] '
 				elif matching_swapped_player_word[i] == '@':
@@ -182,19 +185,21 @@ class Wrdyl(App):
 				else:
 					coloured_output += '[b][white]'  +  ' ' + player_wrdyl[i]+ ' ' + '[/][/] '
 
-
+			#set the row of the play grid to be coloured output (the ~ are include to correct format the colour eiether side of last letter and be symmetrical)
 			self.play_grid[self.guesses-1] = "~ " + coloured_output + "~"
-				
+
+			#Generate, install and display the new game screen featuring the update play grid with the coloured output, ready for the next turn/guess.	
 			game = Game(self.wrdyl_word, self.play_grid)
 			self.install_screen(game, f'game_screen_{self.wrdyl_word}_{self.guesses}')
 			self.push_screen(f'game_screen_{self.wrdyl_word}_{self.guesses}')
 
+			#Check if player has won or lost and install and display the winning or losing screen with cheeky notification.
 			if matching_swapped_player_word == '£££££':
-				#time.sleep(6)
+				self.install_screen(Champ(self.wrdyl_word, self.wrdyl_def), f'champ_screen_{self.wrdyl_word}')
 				self.push_screen(f'champ_screen_{self.wrdyl_word}')
 				self.notify("WINNER WINNER CHICKEN DINNER", title="WRDYL", severity="information", timeout=5)
 			elif self.guesses == 6:
-				#time.sleep(6)
+				self.install_screen(Loser(self.wrdyl_word, self.wrdyl_def), f'loser_screen_{self.wrdyl_word}')
 				self.push_screen(f'loser_screen_{self.wrdyl_word}')
 				self.notify(f" Read a book.", title="Pathetic", severity="information", timeout=5)
 
@@ -211,9 +216,7 @@ class Wrdyl(App):
 			self.notify(f"Your guess is too long. Please enter a five letter word.", title="Too long", severity="warning", timeout=5)
 		elif not event.validation_result.is_valid:
 			self.notify(f"Your guess {event.value} is not in our dictionary. Please try another word.", title="Not in dictionary", severity="information", timeout=5)
-		else:
-			pass
-
+			
 #Run the app
 if __name__ == '__main__':
 	app = Wrdyl()
