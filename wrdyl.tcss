@@ -11,7 +11,7 @@
 
 .play_grid {
     text-align: center;
-    content-align: center middle;
+    content-align: center top;
     offset-y: -2;
 }
 

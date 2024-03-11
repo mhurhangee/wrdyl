@@ -195,11 +195,11 @@ class Wrdyl(App):
 
 			#Check if player has won or lost and install and display the winning or losing screen with cheeky notification.
 			if matching_swapped_player_word == '£££££':
-				self.install_screen(Champ(self.wrdyl_word, self.wrdyl_def), f'champ_screen_{self.wrdyl_word}')
+				self.install_screen(Champ(self.wrdyl_word, self.wrdyl_def, self.play_grid), f'champ_screen_{self.wrdyl_word}')
 				self.push_screen(f'champ_screen_{self.wrdyl_word}')
 				self.notify("WINNER WINNER CHICKEN DINNER", title="WRDYL", severity="information", timeout=5)
 			elif self.guesses == 6:
-				self.install_screen(Loser(self.wrdyl_word, self.wrdyl_def), f'loser_screen_{self.wrdyl_word}')
+				self.install_screen(Loser(self.wrdyl_word, self.wrdyl_def, self.play_grid), f'loser_screen_{self.wrdyl_word}')
 				self.push_screen(f'loser_screen_{self.wrdyl_word}')
 				self.notify(f" Read a book.", title="Pathetic", severity="information", timeout=5)
 
